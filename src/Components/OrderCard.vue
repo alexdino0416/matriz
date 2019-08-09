@@ -88,19 +88,23 @@ export default {
   methods: {
     calculateMatrix() {
       const parsedTags = this.matrix.map((el) => el.map((element) => Number(element.text)));
-      console.log("PARSED TAGS", parsedTags);
       if (this.order % 2 == 0 && this.order != 2) {
         this.rowSum(parsedTags);
         this.multiplyColumn(parsedTags);
       }else if (this.order % 2 != 0 && this.order % 3 == 0 && this.order != 3) {
-        this.firstOp = det(parsedTags);
+        this.firstOp = this.det(parsedTags);
         this.firstOpText = 'El determinante de la matriz es';
       }else if (this.order == 2  || this.order == 3) {
-        this.firstOp = det(parsedTags);
+        this.firstOp = this.det(parsedTags);
         this.firstOpText = 'El determinante de la matriz es';
         this.rowMinus(parsedTags);
-      }else if ((this.order > 2  && this.order < 8) && this.order != 6) {
-        
+      }else if ((this.order > 4  && this.order < 8) && this.order != 6) {
+        let m = parsedTags.map((row) => row.map((el) => Math.cbrt(el)));
+        this.firstOp = this.det(parsedTags);
+        this.firstOpText = 'El determinante de la matriz luego de sacar la raiz cubica a cada elemento es';
+        let n = parsedTags.map((row) => row.map((el) => Math.log(Math.abs(el))));
+        this.secondOp = this.det(parsedTags);
+        this.secondOpText = 'El determinante de la matriz luego de sacar el logaritmo natural al valor absoluto de cada elemento es';
       }
     },
     updateTags(tags, index) {
@@ -113,16 +117,15 @@ export default {
       this.firstOp = sum.reduce((preVal, curVal) => preVal + curVal);
       this.firstOpText = 'La sumatoria de todas las filas de la matriz es';
     },
-    rowMinus() {
+    rowMinus(arr) {
       let minus = 1;
       for (let i = 0; i < this.order; i++) {
         for (let j = 0; j < this.order; j++) {
-          minus *= arr[i][j];
-          
+          minus -= arr[i][j];
         }        
       }
       this.secondOp = minus;
-      this.secondOpTex = 'La sustracci\u00F3n de todos los elementos de cada fila es';
+      this.secondOpText = 'La sustracci\u00F3n de todos los elementos de cada fila es';
     },
     multiplyColumn(arr) {
       let mul = 1;
@@ -133,7 +136,7 @@ export default {
         }        
       }
       this.secondOp = mul;
-      this.secondOpTex = 'El producto de todos los elementos de cada columna es';
+      this.secondOpText = 'El producto de todos los elementos de cada columna es';
     },
     det(M) {
       if (M.length == 2) { return (M[0][0]*M[1][1])-(M[0][1]*M[1][0]); }
