@@ -3,16 +3,19 @@
 		<div class="card">
       <div class="card-content">
         <span class="card-title center">Ingresa el orden</span>
-        <form class="col s12" @submit.prevent="calculateMatrix">
+        <form class="col s12" @[formEvent].prevent="calculateMatrix">
           <div class="section">
             <div class="row">
-              <div class="input-field col s6 offset-s3">
-                <input type="number" class="validate"
+              <div class="input-field col s6 offset-s3" v-tooltip.bottom="!validOrder && errors.first('order')">
+                <input type="number"
+                        :class="{ 'valid': validOrder, 'invalid': !validOrder }"
                         min="2" max="9" 
                         maxlength="1" 
                         id="order" 
                         v-model="parsedOrder"
-                        
+                        v-validate="'required'"
+                        data-vv-name="order"
+                        data-vv-validate-on="change|input"
                 />
                 <label for="order">Orden de los determinantes</label>
               </div>
@@ -23,19 +26,25 @@
           </div>
           <div class="divider"></div>
           <div class="section">
-          <span class="card-title center">Ingresar Filas de la Matriz</span>
+            <div class="card-title">
+              <span class="center">Ingresar Filas de la Matriz</span>
+              <button class="btn blue darken-2 right" 
+                      :class="{ 'disabled': !validMatrix }" id="create-order">
+                <i class="fa fa-plus"></i> 
+                Crear Matriz
+              </button>
+            </div>
             <div class="row">
-              <div class="input-field col s6">
-                <TagInput v-for="(rows, index) in matrix" 
+              <div class="input-field col s12">
+                <TagInput v-for="(rows, index) in matrix"
                           :key="index" 
                           :disabled="!order" 
                           :order="order" 
                           :tags="rows" 
-                          @updateTags="updateTags($event, index)" 
+                          :index="index"
+                          @updateTags="updateTags($event, index)"
+                          v-tooltip.bottom="!validMatrix && errors.first(`row-${index}`)"
                   />
-              </div>
-              <div class="input-field col s6">
-                <button class="btn blue darken-2 right" id="create-order"><i class="fa fa-plus"></i> Crear Matriz</button>
               </div>
             </div>
           </div>
@@ -47,7 +56,7 @@
 </template>
 
 <script>
-import TagInput from './TagInput.vue';
+import TagInput from './TagInput';
 
 export default {
   name: "order-card",
@@ -69,6 +78,16 @@ export default {
         this.order = Number(value);
       }
     },
+    // VALIDATIONS COMPUTEDS
+    formEvent() {
+      return (!this.validOrder || !this.validMatrix) ? null : 'submit';
+    },
+    validOrder() {
+      return !this.errors.has('order');
+    },
+    validMatrix() {
+      return !this.errors.items.length;
+    }
   },
   watch: {
     order(newVal, oldVal) {

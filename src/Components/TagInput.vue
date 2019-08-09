@@ -1,14 +1,14 @@
 <template>
-	<div>
-		<vue-tags-input
-			v-model="tag"
-			:tags="tags"
-			@tags-changed="emitTags"
-			:validation="validation"
-			:avoid-adding-duplicates="false"
-			:disabled="disabled"
-		/>
-  </div>
+	<vue-tags-input
+		v-model="tag"
+		:tags="tags"
+		:validation="validation"
+		:max-tags="order"
+		:disabled="disabled"
+		:avoid-adding-duplicates="false"
+		@tags-changed="emitTags"
+		v-tooltip="rowErrors"
+	/>
 </template>
 
 <script>
@@ -22,6 +22,10 @@ export default {
 		},
 		disabled: {
 			type: Boolean,
+			required: true,
+		},
+		index: {
+			type: Number,
 			required: true,
 		},
 		order: {
@@ -41,17 +45,28 @@ export default {
 					rule: /^([^a-z]*)$/,
 					disableAdd: true,
 				},
-				{
-					classes: 'max-tags',
-					rule: tags => this.tags.length >= this.order,
-					disableAdd: true,
-				}
 			]
 		};
 	},
+	computed: {
+		rowErrors() {
+			this.errors.items.length && this.errors.first(`row-${this.index}`);
+		}
+	},
 	methods: {
 		emitTags(tags) {
-			this.$emit('updateTags', tags);
+			this.validateTags(tags);
+			this.$emit('updateTags', tags);	
+		},
+		// VALIDATION METHOD
+		validateTags(tags) {
+			// FAST EXIT TO CLEAR VALIDATIONS
+			if(tags.length === this.order) return this.$validator.errors.remove(`row-${this.index}`);
+			// ADD ERRORS TO ERROR BAG
+			return this.$validator.errors.add({
+				field: `row-${this.index}`,
+				msg: `The row #${this.index + 1} needs to have ${this.order} columns`,
+			});
 		}
 	}
 };
