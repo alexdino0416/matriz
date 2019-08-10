@@ -2,7 +2,7 @@
 	<div>
 		<nav>
 			<div class="nav-wrapper blue">
-				<a href="/" class="brand-logo center">Operaciones con Determinantes</a>
+				<a href="/" class="brand-logo center">Operaciones con Matriz</a>
 			</div>
 		</nav>
 	</div>

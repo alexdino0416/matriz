@@ -8,16 +8,16 @@
             <div class="row">
               <div class="input-field col s6 offset-s3" v-tooltip.bottom="!validOrder && errors.first('order')">
                 <input type="number"
-                        :class="{ 'valid': validOrder, 'invalid': !validOrder }"
-                        min="2" max="9" 
-                        maxlength="1" 
-                        id="order" 
-                        v-model="parsedOrder"
-                        v-validate="'required'"
-                        data-vv-name="order"
-                        data-vv-validate-on="change|input"
+                  :class="{ 'valid': validOrder, 'invalid': !validOrder }"
+                  min="2" max="9" 
+                  maxlength="1" 
+                  id="order" 
+                  v-model="parsedOrder"
+                  v-validate="'required'"
+                  data-vv-name="order"
+                  data-vv-validate-on="change|input"
                 />
-                <label for="order">Orden de los determinantes</label>
+                <label for="order">Orden de la matriz</label>
               </div>
             </div>
           </div>
@@ -26,7 +26,7 @@
             <div class="card-title">
               <span class="center">Ingresar Filas de la Matriz</span>
               <button class="btn blue darken-2 right" 
-                      :class="{ 'disabled': !canCreateMatrix || !order }" id="create-order">
+                  :class="{ 'disabled': !canCreateMatrix || !order }" id="create-order">
                 <i class="fa fa-plus"></i> 
                 Crear Matriz
               </button>
@@ -34,13 +34,13 @@
             <div class="row">
               <div class="input-field col s12">
                 <TagInput v-for="(rows, index) in matrix"
-                          :key="index" 
-                          :disabled="!order" 
-                          :order="order" 
-                          :tags="rows" 
-                          :index="index"
-                          @updateTags="updateTags($event, index)"
-                          v-tooltip.bottom="!canCreateMatrix && errors.first(`row-${index}`)"
+                  :key="index" 
+                  :disabled="!order" 
+                  :order="order" 
+                  :tags="rows" 
+                  :index="index"
+                  @updateTags="updateTags($event, index)"
+                  v-tooltip.bottom="!canCreateMatrix && errors.first(`row-${index}`)"
                   />
               </div>
             </div>
@@ -82,7 +82,7 @@ export default {
       firstOp: 0,
       secondOp: 0,
       firstOpText: '',
-      secondOpTex: '',
+      secondOpText: '',
     };
   },
   computed: {
@@ -175,7 +175,7 @@ export default {
       if (M.length == 2) { return (M[0][0]*M[1][1])-(M[0][1]*M[1][0]); }
       let answer = 0;
       for (let i=0; i < M.length; i++) { 
-        answer += Math.pow(-1,i) * M[0][i] * det(deleteRowAndColumn(M,i)); 
+        answer += Math.pow(-1,i) * M[0][i] * this.det(this.detdeleteRowAndColumn(M,i)); 
       }
       return answer;
     },
